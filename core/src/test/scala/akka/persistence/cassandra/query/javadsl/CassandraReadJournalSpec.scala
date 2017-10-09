@@ -56,7 +56,7 @@ class CassandraReadJournalSpec
 
   implicit val mat = ActorMaterializer()(system)
 
-  implicit val patience = PatienceConfig(Span(10, Seconds), Span(1, Second))
+  implicit val patience = PatienceConfig(timeout = Span(10, Seconds), interval = Span(1, Second))
 
   lazy val javaQueries = PersistenceQuery(system)
     .getReadJournalFor(classOf[javadsl.CassandraReadJournal], scaladsl.CassandraReadJournal.Identifier)

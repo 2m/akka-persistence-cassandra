@@ -13,6 +13,7 @@ import akka.testkit.{ ImplicitSender, TestKit }
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{ Matchers, WordSpecLike }
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.time._
 
 import scala.concurrent.duration._
 
@@ -21,6 +22,7 @@ import akka.persistence.query.Offset
 import akka.stream.scaladsl.Keep
 import akka.stream.testkit.TestSubscriber.Probe
 import scala.annotation.tailrec
+import scala.concurrent.Promise
 
 object EventsByPersistenceIdWithControlSpec {
   val config = ConfigFactory.parseString(s"""
@@ -44,6 +46,8 @@ class EventsByPersistenceIdWithControlSpec
   override def systemName: String = "EventsByPersistenceIdWithControlSpec"
 
   implicit val mat = ActorMaterializer()(system)
+
+  implicit val patience = PatienceConfig(timeout = Span(10, Seconds), interval = Span(1, Second))
 
   lazy val queries: CassandraReadJournal =
     PersistenceQuery(system).readJournalFor[CassandraReadJournal](CassandraReadJournal.Identifier)

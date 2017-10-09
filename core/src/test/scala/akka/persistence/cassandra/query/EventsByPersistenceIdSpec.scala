@@ -13,6 +13,7 @@ import akka.testkit.{ ImplicitSender, TestKit }
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{ Matchers, WordSpecLike }
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.time._
 
 import scala.concurrent.duration._
 
@@ -52,6 +53,8 @@ class EventsByPersistenceIdSpec
   override def systemName: String = "EventsByPersistenceIdSpec"
 
   implicit val mat = ActorMaterializer()(system)
+
+  implicit val patience = PatienceConfig(timeout = Span(10, Seconds), interval = Span(1, Second))
 
   lazy val queries: CassandraReadJournal =
     PersistenceQuery(system).readJournalFor[CassandraReadJournal](CassandraReadJournal.Identifier)
